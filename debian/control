@@ -1,0 +1,94 @@
+Source: qtbase5-opensource-src-lx
+Section: libs
+Priority: optional
+Maintainer: Anna-Maria Gleixner <a.gleixner@linutronix.de>
+Build-Depends: debhelper (>= 9),
+               dpkg-dev (>= 1.16.1),
+               firebird-dev [kfreebsd-any linux-any],
+               freetds-dev,
+               gdb,
+               libasound2-dev [linux-any],
+               libatspi2.0-dev,
+               libcups2-dev,
+               libdbus-1-dev,
+               libfontconfig1-dev,
+               libfreetype6-dev,
+               libgbm-dev [linux-any],
+               libglib2.0-dev,
+               libgstreamer-plugins-base1.0-dev,
+               libgstreamer1.0-dev,
+               libgtk2.0-dev,
+               libharfbuzz-dev,
+               libicu-dev,
+               libinput-dev [linux-any],
+               libjpeg-dev,
+               libmtdev-dev [linux-any],
+               libmysqlclient-dev,
+               libpcre3-dev,
+               libpng-dev,
+               libpq-dev,
+               libproxy-dev,
+               libpulse-dev,
+               libsqlite3-dev,
+               libssl-dev,
+               libudev-dev [linux-any],
+               libx11-dev,
+               libx11-xcb-dev,
+               libxcb-icccm4-dev,
+               libxcb-image0-dev,
+               libxcb-keysyms1-dev,
+               libxcb-randr0-dev,
+               libxcb-render-util0-dev,
+               libxcb-render0-dev,
+               libxcb-shape0-dev,
+               libxcb-shm0-dev,
+               libxcb-sync-dev,
+               libxcb-xfixes0-dev,
+               libxcb-xkb-dev,
+               libxcb1-dev,
+               libxext-dev,
+               libxi-dev,
+               libxkbcommon-dev,
+               libxkbcommon-x11-dev,
+               libxrender-dev,
+	       ti-pvr-modules-dev,
+	       ti-pvr-modules,
+               pkg-kde-tools,
+               publicsuffix,
+               unixodbc-dev,
+               zlib1g-dev,
+               gcc-4.8,
+               g++-4.8
+Build-Conflicts: libmariadbclient-dev
+Standards-Version: 3.9.6
+Homepage: http://qt-project.org/
+
+Package: qtbase5-lx
+Architecture: armhf
+Pre-Depends: ${misc:Pre-Depends}
+Provides: qtbase-abi-5-5-0
+Depends: ti-pvr-modules, ${misc:Depends}, ${shlibs:Depends}
+Recommends: qttranslations5-l10n
+Suggests: libthai0
+Description: Qt 5 core module
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+
+Package: qtbase5-lx-dev
+Architecture: armhf
+Section: libdevel
+Depends: ti-pvr-modules,
+         ${misc:Depends}
+Suggests: firebird-dev,
+          libegl1-mesa-dev,
+          libgl1-mesa-dev,
+          libmysqlclient-dev,
+          libpq-dev,
+          libsqlite3-dev,
+          unixodbc-dev
+Description: Qt 5 base development files
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ This package contains the header development files used for building Qt 5
+ applications.

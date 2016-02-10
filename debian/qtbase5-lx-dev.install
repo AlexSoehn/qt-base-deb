@@ -1,0 +1,10 @@
+usr/include/*/qt5/Qt*/*
+usr/lib/*/cmake/Qt5*/*.cmake
+usr/lib/*/pkgconfig/*.pc
+usr/lib/*/*.prl
+usr/lib/*/*.so
+usr/share/qt5/doc/global/template/images/*
+usr/share/qt5/doc/global/template/scripts/*
+usr/share/qt5/doc/global/template/style/*
+usr/share/qt5/doc/global/externalsites/*
+usr/share/qt5/doc/global/*

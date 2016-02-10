@@ -1,0 +1,92 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+DPKG_EXPORT_BUILDFLAGS = 0
+
+DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+DEB_HOST_ARCH_OS ?= $(shell dpkg-architecture -qDEB_HOST_ARCH_OS)
+DEB_HOST_ARCH_BITS ?= $(shell dpkg-architecture -qDEB_HOST_ARCH_BITS)
+DEB_HOST_ARCH_CPU ?= $(shell dpkg-architecture -qDEB_HOST_ARCH_CPU)
+
+CFLAGS=-g -O2 -Wformat -Werror=format-security
+CPPFLAGS=-D_FORTIFY_SOURCE=2
+CXXFLAGS=-g -O2 -Wformat -Werror=format-security
+FCFLAGS=-g -O2
+FFLAGS=-g -O2
+GCJFLAGS=-g -O2
+LDFLAGS=-Wl,-z,relro
+OBJCFLAGS=-g -O2 -Wformat -Werror=format-security
+OBJCXXFLAGS=-g -O2 -Wformat -Werror=format-security
+
+export PATH := $(PATH):$(shell pwd)/bin
+
+%:
+	dh $@ --parallel --with pkgkde_symbolshelper
+
+override_dh_auto_configure:
+	CXX=g++-4.8 CC=gcc-4.8 ./configure \
+                    -opengl es2 \
+                    -release \
+                    -nomake tests \
+                    -make examples \
+                    -make libs \
+                    -no-pch \
+                    -no-xcb \
+                    -no-gtkstyle \
+                    -device linux-beagleboard-g++ \
+                    -v \
+                    -prefix "/usr" \
+                    -bindir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5/bin" \
+                    -libdir "/usr/lib/$(DEB_HOST_MULTIARCH)" \
+                    -docdir "/usr/share/qt5/doc" \
+                    -headerdir "/usr/include/$(DEB_HOST_MULTIARCH)/qt5" \
+                    -datadir "/usr/share/qt5" \
+                    -archdatadir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5" \
+                    -hostdatadir "/usr/share/qt5" \
+                    -plugindir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5/plugins" \
+                    -importdir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5/imports" \
+                    -translationdir "/usr/share/qt5/translations" \
+                    -hostdatadir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5" \
+                    -examplesdir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5/examples" \
+                    -opensource \
+                    -confirm-license \
+                    -no-mtdev \
+                    -no-rpath
+
+override_dh_auto_clean:
+	[ ! -f Makefile ] || $(MAKE) confclean distclean
+
+override_dh_auto_install-arch:
+	dh_auto_install -Smakefile -- INSTALL_ROOT=$(CURDIR)/debian/tmp/
+
+	# Fix wrong path in pkgconfig files
+	find $(CURDIR)/debian/tmp/usr/lib/*/pkgconfig -type f -name '*.pc' \
+		-exec perl -pi -e "s, -L$(CURDIR)/?\S+,,g" {} \;
+
+# Remove leftover directories
+	find $(CURDIR)/debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/qt5 -depth -type d \( -false \
+	  -o -name .moc\* \
+	  -o -name .obj\* \
+	  -o -name .pch \
+	  -o -name .rcc \
+	\) -print0 | xargs -0 rm -rf
+
+	# Remove libtool-like files
+	rm -f debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/*.a
+	rm -f debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/*.la
+
+override_dh_auto_install-indep:
+	# Docs are shipping empty directories, most probably for scripts only present
+	# when building online-html. See QTBUG-44655.
+	find $(CURDIR)/debian/tmp/usr/share/qt5/doc/ -type d -empty -delete -print
+
+override_dh_install:
+	# Call dh_install normally. It will process .install, .install.ARCH
+	# and/or .install.OS files.
+	dh_install --fail-missing
+
+override_dh_installdocs:
+	dh_installdocs --all LGPL_EXCEPTION.txt
