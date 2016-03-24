@@ -24,11 +24,13 @@ OBJCXXFLAGS=-g -O2 -Wformat -Werror=format-security
 export PATH := $(PATH):$(shell pwd)/bin
 
 %:
-	dh $@ --parallel --with pkgkde_symbolshelper
+	dh $@ --with pkgkde_symbolshelper
+
+override_dh_shlibdeps:
+	echo 'skip dh_shlibdeps'
 
 override_dh_auto_configure:
 	CXX=g++-4.8 CC=gcc-4.8 ./configure \
-                    -opengl es2 \
                     -release \
                     -nomake tests \
                     -make examples \
@@ -36,21 +38,22 @@ override_dh_auto_configure:
                     -no-pch \
                     -no-xcb \
                     -no-gtkstyle \
+                    -no-compile-examples \
                     -device linux-beagleboard-g++ \
                     -v \
-                    -prefix "/usr" \
-                    -bindir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5/bin" \
-                    -libdir "/usr/lib/$(DEB_HOST_MULTIARCH)" \
-                    -docdir "/usr/share/qt5/doc" \
-                    -headerdir "/usr/include/$(DEB_HOST_MULTIARCH)/qt5" \
-                    -datadir "/usr/share/qt5" \
-                    -archdatadir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5" \
-                    -hostdatadir "/usr/share/qt5" \
-                    -plugindir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5/plugins" \
-                    -importdir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5/imports" \
-                    -translationdir "/usr/share/qt5/translations" \
-                    -hostdatadir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5" \
-                    -examplesdir "/usr/lib/$(DEB_HOST_MULTIARCH)/qt5/examples" \
+                    -prefix "/opt/qt" \
+                    -bindir "/opt/qt/lib/$(DEB_HOST_MULTIARCH)/qt5/bin" \
+                    -libdir "/opt/qt/lib/$(DEB_HOST_MULTIARCH)" \
+                    -docdir "/opt/qt/share/qt5/doc" \
+                    -headerdir "/opt/qt/include/$(DEB_HOST_MULTIARCH)/qt5" \
+                    -datadir "/opt/qt/share/qt5" \
+                    -archdatadir "/opt/qt/lib/$(DEB_HOST_MULTIARCH)/qt5" \
+                    -hostdatadir "/opt/qt/share/qt5" \
+                    -plugindir "/opt/qt/lib/$(DEB_HOST_MULTIARCH)/qt5/plugins" \
+                    -importdir "/opt/qt/lib/$(DEB_HOST_MULTIARCH)/qt5/imports" \
+                    -translationdir "/opt/qt/share/qt5/translations" \
+                    -hostdatadir "/opt/qt/lib/$(DEB_HOST_MULTIARCH)/qt5" \
+                    -examplesdir "/opt/qt/lib/$(DEB_HOST_MULTIARCH)/qt5/examples" \
                     -opensource \
                     -confirm-license \
                     -no-mtdev \
@@ -63,11 +66,11 @@ override_dh_auto_install-arch:
 	dh_auto_install -Smakefile -- INSTALL_ROOT=$(CURDIR)/debian/tmp/
 
 	# Fix wrong path in pkgconfig files
-	find $(CURDIR)/debian/tmp/usr/lib/*/pkgconfig -type f -name '*.pc' \
+	find $(CURDIR)/debian/tmp/opt/qt/lib/*/pkgconfig -type f -name '*.pc' \
 		-exec perl -pi -e "s, -L$(CURDIR)/?\S+,,g" {} \;
 
 # Remove leftover directories
-	find $(CURDIR)/debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/qt5 -depth -type d \( -false \
+	find $(CURDIR)/debian/tmp/opt/qt/lib/$(DEB_HOST_MULTIARCH)/qt5 -depth -type d \( -false \
 	  -o -name .moc\* \
 	  -o -name .obj\* \
 	  -o -name .pch \
@@ -75,13 +78,13 @@ override_dh_auto_install-arch:
 	\) -print0 | xargs -0 rm -rf
 
 	# Remove libtool-like files
-	rm -f debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/*.a
-	rm -f debian/tmp/usr/lib/$(DEB_HOST_MULTIARCH)/*.la
+	rm -f debian/tmp/opt/qt/lib/$(DEB_HOST_MULTIARCH)/*.a
+	rm -f debian/tmp/opt/qt/lib/$(DEB_HOST_MULTIARCH)/*.la
 
 override_dh_auto_install-indep:
 	# Docs are shipping empty directories, most probably for scripts only present
 	# when building online-html. See QTBUG-44655.
-	find $(CURDIR)/debian/tmp/usr/share/qt5/doc/ -type d -empty -delete -print
+	find $(CURDIR)/debian/tmp/opt/qt/share/qt5/doc/ -type d -empty -delete -print
 
 override_dh_install:
 	# Call dh_install normally. It will process .install, .install.ARCH

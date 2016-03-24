@@ -51,8 +51,6 @@ Build-Depends: debhelper (>= 9),
                libxkbcommon-dev,
                libxkbcommon-x11-dev,
                libxrender-dev,
-	       ti-pvr-modules-dev,
-	       ti-pvr-modules,
                pkg-kde-tools,
                publicsuffix,
                unixodbc-dev,
@@ -67,7 +65,7 @@ Package: qtbase5-lx
 Architecture: armhf
 Pre-Depends: ${misc:Pre-Depends}
 Provides: qtbase-abi-5-5-0
-Depends: ti-pvr-modules, ${misc:Depends}, ${shlibs:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
 Recommends: qttranslations5-l10n
 Suggests: libthai0
 Description: Qt 5 core module
@@ -77,8 +75,7 @@ Description: Qt 5 core module
 Package: qtbase5-lx-dev
 Architecture: armhf
 Section: libdevel
-Depends: ti-pvr-modules,
-         ${misc:Depends}
+Depends: ${misc:Depends}
 Suggests: firebird-dev,
           libegl1-mesa-dev,
           libgl1-mesa-dev,
