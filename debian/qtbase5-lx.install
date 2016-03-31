@@ -1,3 +1,2 @@
 opt/qt/lib/*/*.so.5*
 opt/qt/lib/*/qt5
-opt/qt/lib/*/fonts/

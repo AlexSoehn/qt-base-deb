@@ -24,7 +24,7 @@ OBJCXXFLAGS=-g -O2 -Wformat -Werror=format-security
 export PATH := $(PATH):$(shell pwd)/bin
 
 %:
-	dh $@ --with pkgkde_symbolshelper
+	dh $@ --parallel --with pkgkde_symbolshelper
 
 override_dh_shlibdeps:
 	echo 'skip dh_shlibdeps'
@@ -39,7 +39,6 @@ override_dh_auto_configure:
                     -no-xcb \
                     -no-gtkstyle \
                     -no-compile-examples \
-                    -device linux-beagleboard-g++ \
                     -v \
                     -prefix "/opt/qt" \
                     -bindir "/opt/qt/lib/$(DEB_HOST_MULTIARCH)/qt5/bin" \
